@@ -108,7 +108,7 @@ services:
         aliases:
           - telegraf_nodes
     pid: "host"
-    hostname: "{{.Node.Description.Hostname}}"
+    hostname: "{{.Node.Hostname}}"
     # ports: #uncomment if the telegraf port needs to be exposed to the host network
     #   - "8092:8092"
     #   - "8094:8094"
