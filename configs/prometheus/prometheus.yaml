@@ -1,0 +1,36 @@
+global:
+  scrape_interval:     1m
+  evaluation_interval: 1m
+
+
+rule_files:
+  - "swarm_node.rules.yml"
+  - "swarm_task.rules.yml"
+  - "swarm_components.rules.yml"
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+#A task carries a Docker container and the commands 
+#to run inside the container. It is the atomic scheduling unit of swarm. [hence tasks.serviceName]
+  - job_name: 'telegraf-nodes'
+    dns_sd_configs:
+    - names:
+      - 'tasks.telegraf_nodes'
+      type: 'A'
+      port: 9273
+
+  - job_name: 'telegraf'
+    dns_sd_configs:
+    - names:
+      - 'tasks.telegraf'
+      type: 'A'
+      port: 9273

@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 1m
+route:
+  #receiver: 'slack'
+  receiver: 'email'
+
+# receivers:
+  # - name: 'slack'
+  #   slack_configs:
+  #       - send_resolved: true
+  #         text: "{{ .CommonAnnotations.description }}"
+  #         #username: <user>#
+  #         #channel: <channel>#
+  #         #api_url: <url>#
+receivers:
+- name: 'email'
+  email_configs:
+  - to: ''
+    from: ''
+    smarthost: smtp.sendgrid.net:587
+    auth_username: 'apikey'
+    auth_identity: ''
+    auth_password: ''

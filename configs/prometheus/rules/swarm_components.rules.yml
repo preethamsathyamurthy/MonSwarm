@@ -1,0 +1,13 @@
+groups:
+- name: swarm_components.rules.yml
+  rules:
+  - alert: node_cpu_usage
+    expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[1m]) * ON(instance) GROUP_LEFT(node_name)
+      node_meta * 100) BY (node_name)) > 50
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      description: Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize
+        $value}}%.
+      summary: CPU alert for Swarm node '{{ $labels.node_name }}'
