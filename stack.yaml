@@ -51,7 +51,7 @@ services:
       - source: prometheus_alerting_task_rules
         target: /etc/prometheus/swarm_task.rules.yml
       - source: prometheus_alerting_components_rules
-        target: /etc/prometheus/swarm_task.rules.yml
+        target: /etc/prometheus/swarm_components.rules.yml
     volumes:
       - type: volume
         source: prometheus-data
