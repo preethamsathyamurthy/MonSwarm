@@ -53,9 +53,7 @@ services:
       - source: prometheus_alerting_components_rules
         target: /etc/prometheus/swarm_components.rules.yml
     volumes:
-      - type: volume
-        source: prometheus-data
-        target: /prometheus
+      - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -110,24 +108,17 @@ services:
         aliases:
           - telegraf_nodes
     pid: "host"
-    hostname: "{{.Node.ID}}"
+    hostname: "{{.Node.Description.Hostname}}"
     # ports: #uncomment if the telegraf port needs to be exposed to the host network
     #   - "8092:8092"
     #   - "8094:8094"
     #   - "8125:8125"
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock:ro
-      - type: bind
-        source: /sys
-        target: /host/sys:ro
-      - type: bind
-        source: /proc
-        target: /host/proc:ro
-      - type: bind
-        source: /etc
-        target: /host/etc:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+      - /etc:/host/etc:ro
+      - HOSTNAME={{.Node.Description.Hostname}}
     configs:
       - source: telegraf_global
         target: /etc/telegraf/telegraf.conf
@@ -160,9 +151,7 @@ services:
     #   - "8084:8094"
     #   - "8185:8125"
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     configs:
       - source: telegraf
         target: /etc/telegraf/telegraf.conf
@@ -170,6 +159,7 @@ services:
       - HOST_PROC=/host/proc
       - HOST_SYS=/host/sys
       - HOST_ETC=/host/etc
+      - HOSTNAME={{.Node.ID}}
     restart: always
     deploy:
       mode: replicated
