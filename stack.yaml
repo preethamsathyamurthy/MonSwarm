@@ -119,19 +119,15 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock:ro
-        mode: ro
       - type: bind
         source: /sys
-        target: /host/sys
-        mode: ro
+        target: /host/sys:ro
       - type: bind
         source: /proc
-        target: /host/proc
-        mode: ro
+        target: /host/proc:ro
       - type: bind
         source: /etc
-        target: /host/etc
-        mode: ro
+        target: /host/etc:ro
     configs:
       - source: telegraf_global
         target: /etc/telegraf/telegraf.conf
@@ -167,7 +163,6 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock:ro
-        mode: ro
     configs:
       - source: telegraf
         target: /etc/telegraf/telegraf.conf
