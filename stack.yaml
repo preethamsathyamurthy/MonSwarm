@@ -1,13 +1,18 @@
 version: "3.5"
 
 networks:
-  network:
+  prom_network:
     driver: overlay
     attachable: true
     ipam:
       driver: default
       config:
         - subnet: 10.0.255.0/24
+
+# networks:
+#   default:
+#     external: true
+#     name: influx_network
 
 configs:
  telegraf_global:
@@ -30,14 +35,14 @@ services:
   prometheus:
     image: ${PROMETHEUS_IMAGE}
     networks:
-      network:
+      prom_network:
         aliases:
           - prometheus
     # network_mode: "bridge"
     container_name: Prometheus
     ports:
       # - "80:8086"
-      - "9000:9090"
+      - "80:9090"
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
@@ -66,7 +71,7 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 1.5G
         reservations:
           cpus: '0.1'
           memory: 100M
@@ -74,7 +79,7 @@ services:
   alertmanager:
     image: ${ALERTMANAGER_IMAGE}
     networks:
-      network:
+      prom_network:
         aliases:
           - alertmanager
     configs:
@@ -101,7 +106,7 @@ services:
     image: ${TELEGRAF_IMAGE}
     user: telegraf:1000
     networks:
-      network:
+      prom_network:
         aliases:
           - telegraf_nodes
     pid: "host"
@@ -149,7 +154,9 @@ services:
     image: ${TELEGRAF_IMAGE}
     user: telegraf:1000
     networks:
-      - network
+      prom_network:
+        aliases:
+          - telegraf
     pid: "host"
     hostname: "{{.Node.ID}}"
     # ports: #uncomment if the telegraf port needs to be exposed to the host network
@@ -185,7 +192,7 @@ services:
   grafana8:
     image: ${GRAFANA_IMAGE}
     networks:
-      network:
+      prom_network:
         aliases:
           - grafana
     container_name: grafana8
@@ -200,7 +207,7 @@ services:
       resources:
         limits:
           cpus: '1'
-          memory: 256M
+          memory: 512M
         reservations:
           cpus: '0.1'
           memory: 100M
