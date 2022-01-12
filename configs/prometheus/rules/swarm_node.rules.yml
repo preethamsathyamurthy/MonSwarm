@@ -2,43 +2,36 @@ groups:
 - name: swarm_node.rules.yml
   rules:
   - alert: node_cpu_usage
-    expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[1m]) * ON(instance) GROUP_LEFT(node_name)
-      node_meta * 100) BY (node_name)) > 50
+    expr: 1100 - (avg by(host) (cpu_usage_idle / 100) * 100) > 80
     for: 1m
     labels:
       severity: warning
     annotations:
-      description: Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize
-        $value}}%.
-      summary: CPU alert for Swarm node '{{ $labels.node_name }}'
+      description: Swarm node {{ $labels.host }} CPU usage is at {{ humanize $value}}%.
+      summary: CPU alert for Swarm node '{{ $labels.host }}'
   - alert: node_memory_usage
-    expr: sum(((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes)
-      * ON(instance) GROUP_LEFT(node_name) node_meta * 100) BY (node_name) > 80
+    expr: mem_used_percent > 80
     for: 1m
     labels:
       severity: warning
     annotations:
-      description: Swarm node {{ $labels.node_name }} memory usage is at {{ humanize
-        $value}}%.
-      summary: Memory alert for Swarm node '{{ $labels.node_name }}'
-  - alert: node_disk_usage
-    expr: ((node_filesystem_size_bytes{mountpoint="/rootfs"} - node_filesystem_free_bytes{mountpoint="/rootfs"})
-      * 100 / node_filesystem_size_bytes{mountpoint="/rootfs"}) * ON(instance) GROUP_LEFT(node_name)
-      node_meta > 85
+      description: Swarm node {{ $labels.host }} Memory usage is at {{ humanize $value}}%.
+      summary: Memory alert for Swarm node '{{ $labels.host }}'
+  - alert: node_disk_usage_70_percent
+    expr: disk_used_percent > 70
     for: 1m
     labels:
       severity: warning
     annotations:
-      description: Swarm node {{ $labels.node_name }} disk usage is at {{ humanize
+      description: Swarm node {{ $labels.host }} s {{ $labels.device }} disk usage is at {{ humanize
         $value}}%.
-      summary: Disk alert for Swarm node '{{ $labels.node_name }}'
-  - alert: node_disk_fill_rate_6h
-    expr: predict_linear(node_filesystem_free_bytes{mountpoint="/rootfs"}[1h], 6 * 3600) * ON(instance)
-      GROUP_LEFT(node_name) node_meta < 0
+      summary: Disk alert for Swarm node '{{ $labels.host }}' s {{ $labels.device }} 
+  - alert: node_disk_fill_rate_12h
+    expr: predict_linear(disk_free[1h], 12 * 3600) < 0
     for: 1h
     labels:
       severity: critical
     annotations:
-      description: Swarm node {{ $labels.node_name }} disk is going to fill up in
-        6h.
-      summary: Disk fill alert for Swarm node '{{ $labels.node_name }}'
+      description: Swarm node {{ $labels.host }} s {{ $labels.device }} disk is going to fill up in
+        12h.
+      summary: Disk fill alert for Swarm node '{{ $labels.node_name }}' s {{ $labels.device }}
