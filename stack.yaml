@@ -194,7 +194,7 @@ services:
     volumes:
       - grafana:/var/lib/grafana
     ports:
-      - "5000:3000"
+      - "2000:3000"
     restart: always
     deploy:
       mode: replicated
