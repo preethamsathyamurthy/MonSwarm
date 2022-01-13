@@ -38,8 +38,8 @@ groups:
     for: 0m
     annotations:
       description: 'Failed exit of container {{ $labels.container_name }} ||  on ''{{
-        $labels.engine_host }}'' Boolean Value is at {{ humanize
-        $value}}%.'
+        $labels.engine_host }}'' Exit Code is {{ humanize
+        $value}} .'
       summary: Failed exit of container '{{ $labels.container_name}}' on '{{ $labels.engine_host }}'
 
       

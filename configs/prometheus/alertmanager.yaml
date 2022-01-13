@@ -1,5 +1,5 @@
 global:
-  resolve_timeout: 1m
+  resolve_timeout: 30s
 route:
   #receiver: 'slack'
   receiver: 'email'
